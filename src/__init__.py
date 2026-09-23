@@ -1,2 +1,1 @@
-from .neural_network import *
-from .helper_functions import *
+"""A three-layer fully connected network for CIFAR-10, written in NumPy."""

@@ -1,0 +1,18 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+venv/
+.venv/
+
+# CIFAR-10 archive, downloaded on first run
+data/
+
+# trained weights: regenerate with `python -m src.main`
+models/*.npz
+models/*.pkl
+
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

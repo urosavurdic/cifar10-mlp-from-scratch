@@ -1,21 +1,17 @@
-import numpy as np
-
-
 def preprocess_data(x_train, x_test):
     """
-    Normalize pixel values and flatten images
+    Scales pixels to [0, 1] and flattens each image into a single vector.
 
     Args:
-        Training and test images, shape (num_samples, height, width, channels)
+        x_train, x_test: arrays of shape (n_samples, height, width, channels)
 
     Returns:
-        Flattened and normalized training and test data (num_samples, height*width*channels)
+        Arrays of shape (n_samples, height * width * channels). All three
+        colour channels are kept.
     """
-    # Convert to float and normalize pixel values between 0 and 1
-    x_train = x_train.astype('float32') / 255.0
-    x_test = x_test.astype('float32') / 255.0
+    x_train = x_train.astype("float32") / 255.0
+    x_test = x_test.astype("float32") / 255.0
 
-    # Flatten each image to a 1D vector (preserving all RGB channels)
     x_train = x_train.reshape(x_train.shape[0], -1)
     x_test = x_test.reshape(x_test.shape[0], -1)
 

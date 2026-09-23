@@ -1,34 +1,46 @@
-import numpy as np
-from data_loader import load_cifar10_data
-from neural_network import NeuralNetwork3Layer
-from trainer import train_model
-from evaluator import print_classification_report, plot_confusion_matrix
-from preprocessor import preprocess_data
+"""
+Trains the network end to end and reports test accuracy once.
 
-# load data
-X_train, y_train, X_test, y_test = load_cifar10_data()
+Run from the repository root:
 
-y_train = y_train.flatten()
-y_test = y_test.flatten()
-
-# preprocess data (reshape + normalize)
-x_train, x_test = preprocess_data(X_train, X_test)
-
-# construct model (input size = 3072)
-model = NeuralNetwork3Layer(
-    input_size=3072,
-    output_size=10,
-    hidden_size1=256,
-    hidden_size2=128,
-    learning_rate=0.01
+    python -m src.main
+"""
+from .data_loader import load_cifar10_data
+from .evaluator import (
+    evaluate_accuracy,
+    plot_confusion_matrix,
+    print_classification_report,
 )
+from .neural_network import NeuralNetwork3Layer
+from .preprocessor import preprocess_data
+from .trainer import train_model, train_val_split
 
-# train model
-train_model(model, x_train, y_train, x_test, y_test, epochs=100)
 
-# evaluation
-predictions = model.predict(x_test)
+def main():
+    x_train_raw, y_train, x_test_raw, y_test = load_cifar10_data()
 
-print("\nFinal Classification Report:")
-print(print_classification_report(y_test, predictions))
-plot_confusion_matrix(y_test, predictions)
+    x_train, x_test = preprocess_data(x_train_raw, x_test_raw)
+
+    # 32 * 32 * 3 = 3072 inputs, one per colour channel per pixel
+    model = NeuralNetwork3Layer(
+        input_size=3072,
+        output_size=10,
+        hidden_size1=256,
+        hidden_size2=128,
+        learning_rate=0.01,
+        seed=0,
+    )
+
+    x_tr, y_tr, x_val, y_val = train_val_split(x_train, y_train, val_fraction=0.1)
+    train_model(model, x_tr, y_tr, x_val, y_val, epochs=100, patience=5)
+
+    # The test set is touched once, here, after model selection is finished.
+    predictions = model.predict(x_test)
+    print(f"\nTest accuracy: {evaluate_accuracy(y_test, predictions):.4f}")
+    print("\nClassification report:")
+    print(print_classification_report(y_test, predictions))
+    plot_confusion_matrix(y_test, predictions)
+
+
+if __name__ == "__main__":
+    main()
