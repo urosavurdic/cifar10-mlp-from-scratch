@@ -57,7 +57,31 @@ loading them cannot execute code.
 
 ## Results
 
-RESULTS_PLACEHOLDER
+Trained on the full 50,000-image training set (45,000 train / 5,000 validation),
+stopped early at epoch 26, and evaluated once on the 10,000-image test set.
+
+**Test accuracy: 48.3%** — against 10% for chance.
+
+| Class | Precision | Recall | F1 |
+|---|---|---|---|
+| airplane | 0.57 | 0.49 | 0.53 |
+| automobile | 0.58 | 0.61 | 0.59 |
+| bird | 0.34 | 0.38 | 0.36 |
+| cat | 0.38 | 0.28 | 0.32 |
+| deer | 0.40 | 0.42 | 0.41 |
+| dog | 0.42 | 0.32 | 0.37 |
+| frog | 0.50 | 0.55 | 0.52 |
+| horse | 0.53 | 0.54 | 0.54 |
+| ship | 0.56 | 0.65 | 0.60 |
+| truck | 0.52 | 0.57 | 0.54 |
+
+The ceiling here is the architecture, not the training. A fully connected net
+flattens the image and throws away the fact that neighbouring pixels are
+related, so it has to learn every spatial pattern independently at every
+position. The per-class split shows it: rigid, distinctly-coloured classes
+(ship, automobile) score well, while the deformable animal classes it has to
+recognise in many poses (cat at 0.28 recall, dog at 0.32) are where it fails.
+That gap is what convolution exists to close.
 
 ## License
 
